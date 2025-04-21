@@ -23,7 +23,7 @@ class App(ctk.CTk):
         self.configure(fg_color=pallet['bg'])
 
         self.columnconfigure((0, 2), weight=1, uniform='a')
-        self.columnconfigure(1, weight=2)
+        self.columnconfigure(1, weight=2, uniform='a')
         self.rowconfigure(0, weight=2, uniform='a')
 
         # create score
@@ -53,9 +53,9 @@ class teamView(ctk.CTkFrame):
         super().__init__(parent)
         self.configure(fg_color="transparent")
 
-        self.columnconfigure(0, weight=1)
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=8)
+        self.columnconfigure(0, weight=1, uniform='a')
+        self.rowconfigure(0, weight=1, uniform='a')
+        self.rowconfigure(1, weight=8, uniform='a')
 
         scoreViewer = ctk.CTkLabel(self, text_color=pallet['team'][teamNumber],
                                    textvariable=parent.scoreVar[teamNumber],
@@ -80,41 +80,43 @@ class mainGame(ctk.CTkFrame):
 
     def guess(self, id):
         tempQuestionFrame = QuestionFrame(self, id)
-        tempQuestionFrame.grid(row=0, column=1, rowspan=5,
+        tempQuestionFrame.grid(row=0, column=0, rowspan=5,
                                columnspan=5, sticky='nswe')
-
-    def checkMatrix(self, id):
         row = id // 5
         col = id % 5
+        self.checkMatrix(row, col)
 
-        if self.matrix[row][col].team != 2:
+    def checkMatrix(self, row, col):
+        if self.matrix[row][col].team != -1:
             self.matrix[row][col].reconfigure()
-
-        self.after(300, lambda event: self.checkMatrix(id))
+        else:
+            self.after(300, lambda: self.checkMatrix(row, col))
 
 
 class Question(ctk.CTkLabel):
     def __init__(self, parent, id):
         super().__init__(parent)
-        self.team = 2
+        self.team = -1
         self.configure(fg_color=pallet['none'], text=str(id), corner_radius=10)
         self.bind('<Button-1>', lambda event: parent.guess(id))
 
     def reconfigure(self):
-        self.configure(fg_color=pallet['team'][self.team], text_color=[
-                       'team'][self.team])
+        if self.team in [0, 1, 2]:
+            self.configure(fg_color=pallet['team'][self.team],
+                           text_color=pallet['team'][self.team])
 
 
 class QuestionFrame(ctk.CTkFrame):
     def __init__(self, parent, id):
         super().__init__(parent)
         self.parent = parent
+        self.id = id
         self.configure(fg_color=pallet['bg'])
 
-        self.columnconfigure((0, 1, 3), weight=1, uniform='a')
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=7)
-        self.rowconfigure(2, weight=2)
+        self.columnconfigure((0, 1, 2), weight=1, uniform='a')
+        self.rowconfigure(0, weight=1, uniform='a')
+        self.rowconfigure(1, weight=7, uniform='a')
+        self.rowconfigure(2, weight=2, uniform='a')
 
         questionNumer = ctk.CTkLabel(self, text=f"Pytanie {id}:")
         questionNumer.grid(row=0, column=0, columnspan=3, sticky='nswe')
@@ -123,28 +125,31 @@ class QuestionFrame(ctk.CTkFrame):
         question.grid(row=1, column=0, columnspan=3, sticky='nswe')
 
         butTeamA = ctk.CTkButton(self,
-                                 command=lambda event: self.buttonClicked(0),
+                                 command=lambda: self.buttonClicked(0),
                                  fg_color=pallet['team'][0],
                                  text_color=pallet['teamTxt'][0],
                                  hover_color=pallet['teamHover'][0])
         butTeamA.grid(row=2, column=0, sticky='nswe')
 
         butTeamN = ctk.CTkButton(self,
-                                 command=lambda event: self.buttonClicked(2),
+                                 command=lambda: self.buttonClicked(2),
                                  fg_color=pallet['team'][2],
                                  text_color=pallet['teamTxt'][2],
                                  hover_color=pallet['teamHover'][2])
         butTeamN.grid(row=2, column=1, sticky='nswe')
 
         butTeamB = ctk.CTkButton(self,
-                                 command=lambda event: self.buttonClicked(1),
+                                 command=lambda: self.buttonClicked(1),
                                  fg_color=pallet['team'][1],
                                  text_color=pallet['teamTxt'][1],
                                  hover_color=pallet['teamHover'][1])
         butTeamB.grid(row=2, column=2, sticky='nswe')
 
-    def buttonClicked(self, id):
-        pass
+    def buttonClicked(self, teamID):
+        row = self.id // 5
+        col = self.id % 5
+        self.parent.matrix[row][col].team = teamID
+        self.destroy()
 
 
 class ImgTxtFrame(ctk.CTkFrame):
