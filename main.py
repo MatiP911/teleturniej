@@ -156,6 +156,56 @@ class ImgTxtFrame(ctk.CTkFrame):
     def __init__(self, parent, id):
         super().__init__(parent)
 
+        self.columnconfigure(0, weight=0)
+        self.columnconfigure(1, weight=1)
+
+        text = '[img/test.png](500x300) aaaa'
+
+        self.text = text
+
+        self.imgLabel = None
+        width, height = 500, 500
+
+        if text.startswith("[") and "]" in text:
+            end_index = text.find(']')
+            link = text[1:end_index]
+            if text[end_index+1:].startswith('('):
+                size_end = text.find(')', end_index)
+                if size_end != -1:
+                    size_str = text[end_index+2:size_end]
+                    if 'x' in size_str:
+                        w, h = size_str.split('x')
+                        try:
+                            width = int(w)
+                            height = int(h)
+                        except ValueError:
+                            pass
+                    self.text = text[size_end+1:].strip()
+                else:
+                    self.text = text[end_index+1:].strip()
+            else:
+                self.text = text[end_index+1:].strip()
+
+            self.load_image(link, width, height)
+        self.txtLabel = ctk.CTkLabel(self, text=self.text)
+        self.txtLabel.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+
+        if self.imgLabel:
+            self.imgLabel.grid(row=0, column=0, padx=10, pady=10)
+
+    def load_image(self, uri, width, height):
+        try:
+            img = Image.open(uri)
+
+            img = img.resize((width, height))
+            self.ctkImg = ctk.CTkImage(
+                light_image=img, dark_image=img, size=(width, height))
+
+            self.imgLabel = ctk.CTkLabel(self, image=self.ctkImg, text='')
+        except Exception as e:
+            print(f"Unable to load img: {e}")
+            self.imgLabel = None
+
 
 if __name__ == '__main__':
     App()
