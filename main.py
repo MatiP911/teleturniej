@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import Image, ImageTk
+from PIL import Image
 
 pallet = {
     "main":  "black",
@@ -26,7 +26,7 @@ class App(ctk.CTk):
         self.columnconfigure(1, weight=2, uniform='a')
         self.rowconfigure(0, weight=2, uniform='a')
 
-        # create score
+        # Create score
         self.scoreVar = (ctk.StringVar(value=""), ctk.StringVar(value=""))
         self.updateScoreView()
 
@@ -129,21 +129,21 @@ class QuestionFrame(ctk.CTkFrame):
                                  fg_color=pallet['team'][0],
                                  text_color=pallet['teamTxt'][0],
                                  hover_color=pallet['teamHover'][0])
-        butTeamA.grid(row=2, column=0, sticky='nswe')
+        butTeamA.grid(row=2, column=0, sticky='nswe', padx=5, pady=10)
 
         butTeamN = ctk.CTkButton(self,
                                  command=lambda: self.buttonClicked(2),
                                  fg_color=pallet['team'][2],
                                  text_color=pallet['teamTxt'][2],
                                  hover_color=pallet['teamHover'][2])
-        butTeamN.grid(row=2, column=1, sticky='nswe')
+        butTeamN.grid(row=2, column=1, sticky='nswe', padx=5, pady=10)
 
         butTeamB = ctk.CTkButton(self,
                                  command=lambda: self.buttonClicked(1),
                                  fg_color=pallet['team'][1],
                                  text_color=pallet['teamTxt'][1],
                                  hover_color=pallet['teamHover'][1])
-        butTeamB.grid(row=2, column=2, sticky='nswe')
+        butTeamB.grid(row=2, column=2, sticky='nswe', padx=5, pady=10)
 
     def buttonClicked(self, teamID):
         row = self.id // 5
@@ -156,10 +156,11 @@ class ImgTxtFrame(ctk.CTkFrame):
     def __init__(self, parent, id):
         super().__init__(parent)
 
-        self.columnconfigure(0, weight=0)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=0)
 
-        text = '[img/test.png](500x300) aaaa'
+        text = '[img/test.png](1000x300) aaaa'
 
         self.text = text
 
@@ -188,10 +189,10 @@ class ImgTxtFrame(ctk.CTkFrame):
 
             self.load_image(link, width, height)
         self.txtLabel = ctk.CTkLabel(self, text=self.text)
-        self.txtLabel.grid(row=0, column=1, padx=10, pady=10, sticky="w")
+        self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         if self.imgLabel:
-            self.imgLabel.grid(row=0, column=0, padx=10, pady=10)
+            self.imgLabel.grid(row=1, column=0, padx=10, pady=10)
 
     def load_image(self, uri, width, height):
         try:
