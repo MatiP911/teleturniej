@@ -3,13 +3,13 @@ from PIL import Image
 from questions import questions
 
 pallet = {
-    "main":  "black",
-    "txt": "white",
-    "team": ("green", "blue", "red"),
-    "teamTxt": ("blue", "green", "white"),
-    "teamHover": ("red", "red", "blue"),
-    "none": "grey",
-    "bg": "black"
+    "bg":  "#070304",
+    "txt": "#F1F7ED",
+    "team": ("#054F94", "#D62828", "#AC9F39"),
+    "teamTxt": ("#F1F2EB", "#EAE2B7", "#1D1816"),
+    "teamHover": ("#043F76", "#AC2020", "#998D33"),
+    "none": "#464344",
+    "noneHover": "#343233"
 }
 
 
@@ -95,16 +95,17 @@ class mainGame(ctk.CTkFrame):
             self.after(300, lambda: self.checkMatrix(row, col))
 
 
-class Question(ctk.CTkLabel):
+class Question(ctk.CTkButton):
     def __init__(self, parent, id):
         super().__init__(parent)
         self.parent = parent
         self.team = -1
         self.points = questions[id][0]
         self.configure(fg_color=pallet['none'], text=str(
-            self.points), corner_radius=10)
-        self.bind('<Button-1>',
-                  lambda event: (setattr(self, 'team', -1), parent.guess(id)))
+            self.points), corner_radius=10, text_color=pallet['txt'],
+            hover_color=pallet['noneHover'])
+        self.configure(command=lambda: (
+            setattr(self, 'team', -1), parent.guess(id)))
 
     def reconfigure(self):
         if self.team in [0, 1, 2]:
@@ -112,7 +113,8 @@ class Question(ctk.CTkLabel):
                 score[self.team] += self.points
                 self.parent.parent.updateScoreView()
             self.configure(fg_color=pallet['team'][self.team],
-                           text_color=pallet['team'][self.team])
+                           text_color=pallet['teamTxt'][self.team],
+                           hover_color=pallet['teamHover'][self.team])
 
 
 class QuestionFrame(ctk.CTkFrame):
@@ -127,7 +129,8 @@ class QuestionFrame(ctk.CTkFrame):
         self.rowconfigure(1, weight=7, uniform='a')
         self.rowconfigure(2, weight=2, uniform='a')
 
-        questionNumer = ctk.CTkLabel(self, text=f"Pytanie {id}:")
+        questionNumer = ctk.CTkLabel(
+            self, text=f"Pytanie {id}:", text_color=pallet['txt'])
         questionNumer.grid(row=0, column=0, columnspan=3, sticky='nswe')
 
         question = ImgTxtFrame(self, id)
@@ -164,6 +167,7 @@ class QuestionFrame(ctk.CTkFrame):
 class ImgTxtFrame(ctk.CTkFrame):
     def __init__(self, parent, id):
         super().__init__(parent)
+        self.configure(fg_color=pallet['none'])
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
@@ -228,7 +232,8 @@ class ImgTxtFrame(ctk.CTkFrame):
                 self.text = text[end_index+1:].strip()
 
             self.load_image(link, width, height)
-        self.txtLabel = ctk.CTkLabel(self, text=self.text)
+        self.txtLabel = ctk.CTkLabel(
+            self, text=self.text, text_color=pallet['txt'])
         self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky='nswe')
         self.txtLabel.bind('<Button-1>', lambda event: self.load_another())
 
