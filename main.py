@@ -52,6 +52,8 @@ class App(ctk.CTk):
 class teamView(ctk.CTkFrame):
     def __init__(self, parent, teamNumber):
         super().__init__(parent)
+        self.parent = parent
+        self.teamNumber = teamNumber
         self.configure(fg_color="transparent")
 
         self.columnconfigure(0, weight=1, uniform='a')
@@ -62,6 +64,13 @@ class teamView(ctk.CTkFrame):
                                    textvariable=parent.scoreVar[teamNumber],
                                    font=('Tekton Pro', 40))
         scoreViewer.grid(row=0, column=0, sticky='nswe')
+        scoreViewer.bind('<Button-1>', self.changeScore)
+
+    def changeScore(self, _):
+        dialog = ctk.CTkInputDialog(text="Change score:", title="Change score")
+        newScore = dialog.get_input()
+        score[self.teamNumber] = int(newScore)
+        self.parent.updateScoreView()
 
 
 class mainGame(ctk.CTkFrame):
