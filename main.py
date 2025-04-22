@@ -161,6 +161,27 @@ class ImgTxtFrame(ctk.CTkFrame):
         self.rowconfigure(1, weight=0)
 
         text = '[img/test.png](1000x300) aaaa'
+        answ = 'test'
+        self.load_text(text)
+
+        self.bind('<Button-1>', lambda event: self.load_text(answ))
+
+    def load_image(self, uri, width, height):
+        try:
+            img = Image.open(uri)
+
+            img = img.resize((width, height))
+            self.ctkImg = ctk.CTkImage(
+                light_image=img, dark_image=img, size=(width, height))
+
+            self.imgLabel = ctk.CTkLabel(self, image=self.ctkImg, text='')
+        except Exception as e:
+            print(f"Unable to load img: {e}")
+            self.imgLabel = None
+
+    def load_text(self, text):
+        for widget in self.winfo_children():
+            widget.destroy()
 
         self.text = text
 
@@ -189,23 +210,10 @@ class ImgTxtFrame(ctk.CTkFrame):
 
             self.load_image(link, width, height)
         self.txtLabel = ctk.CTkLabel(self, text=self.text)
-        self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+        self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky='nswe')
 
         if self.imgLabel:
             self.imgLabel.grid(row=1, column=0, padx=10, pady=10)
-
-    def load_image(self, uri, width, height):
-        try:
-            img = Image.open(uri)
-
-            img = img.resize((width, height))
-            self.ctkImg = ctk.CTkImage(
-                light_image=img, dark_image=img, size=(width, height))
-
-            self.imgLabel = ctk.CTkLabel(self, image=self.ctkImg, text='')
-        except Exception as e:
-            print(f"Unable to load img: {e}")
-            self.imgLabel = None
 
 
 if __name__ == '__main__':
