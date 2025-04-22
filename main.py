@@ -23,6 +23,12 @@ class App(ctk.CTk):
         self.title("Teleturniej")
         self.configure(fg_color=pallet['bg'])
 
+        # bgImg = Image.open("img/background.png")
+        # bgImg = bgImg.resize((1920, 1080))
+        # bgImgCtk = ctk.CTkImage(bgImg, size=(1920, 1080))
+        # self.bgIMG = ctk.CTkLabel(self, image=bgImgCtk, text="")
+        # self.bgIMG.place(x=0, y=0, relwidth=1, relheight=1)
+
         self.columnconfigure((0, 2), weight=1, uniform='a')
         self.columnconfigure(1, weight=2, uniform='a')
         self.rowconfigure(0, weight=2, uniform='a')
@@ -38,9 +44,14 @@ class App(ctk.CTk):
         self.teamsB = teamView(self, 1)
         self.teamsB.grid(row=0, column=2, sticky='nswe')
 
+        self.teamsA.lift()
+        self.teamsB.lift()
+
         # Maingame
         self.gameScreen = mainGame(self)
         self.gameScreen .grid(row=0, column=1, sticky='nswe', padx=20, pady=80)
+
+        self.gameScreen.lift()
 
         self.mainloop()
 
@@ -54,7 +65,7 @@ class teamView(ctk.CTkFrame):
         super().__init__(parent)
         self.parent = parent
         self.teamNumber = teamNumber
-        self.configure(fg_color="transparent")
+        self.configure(fg_color=pallet['bg'])
 
         self.columnconfigure(0, weight=1, uniform='a')
         self.rowconfigure(0, weight=1, uniform='a')
@@ -62,13 +73,16 @@ class teamView(ctk.CTkFrame):
 
         scoreViewer = ctk.CTkLabel(self, text_color=pallet['team'][teamNumber],
                                    textvariable=parent.scoreVar[teamNumber],
-                                   font=('Tekton Pro', 40))
+                                   font=('Tekton Pro', 40),
+                                   fg_color=pallet['bg'])
         scoreViewer.grid(row=0, column=0, sticky='nswe')
         scoreViewer.bind('<Button-1>', self.changeScore)
 
     def changeScore(self, _):
         dialog = ctk.CTkInputDialog(text="Change score:", title="Change score")
         newScore = dialog.get_input()
+        if newScore is None or newScore == '':
+            return
         score[self.teamNumber] = int(newScore)
         self.parent.updateScoreView()
 
@@ -145,21 +159,21 @@ class QuestionFrame(ctk.CTkFrame):
         question = ImgTxtFrame(self, id)
         question.grid(row=1, column=0, columnspan=3, sticky='nswe')
 
-        butTeamA = ctk.CTkButton(self,
+        butTeamA = ctk.CTkButton(self, text='TeamA', font=('Tekton Pro', 20),
                                  command=lambda: self.buttonClicked(0),
                                  fg_color=pallet['team'][0],
                                  text_color=pallet['teamTxt'][0],
                                  hover_color=pallet['teamHover'][0])
         butTeamA.grid(row=2, column=0, sticky='nswe', padx=5, pady=10)
 
-        butTeamN = ctk.CTkButton(self,
+        butTeamN = ctk.CTkButton(self, text='Nikt', font=('Tekton Pro', 20),
                                  command=lambda: self.buttonClicked(2),
                                  fg_color=pallet['team'][2],
                                  text_color=pallet['teamTxt'][2],
                                  hover_color=pallet['teamHover'][2])
         butTeamN.grid(row=2, column=1, sticky='nswe', padx=5, pady=10)
 
-        butTeamB = ctk.CTkButton(self,
+        butTeamB = ctk.CTkButton(self, text='TeamB', font=('Tekton Pro', 20),
                                  command=lambda: self.buttonClicked(1),
                                  fg_color=pallet['team'][1],
                                  text_color=pallet['teamTxt'][1],
