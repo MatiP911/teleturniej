@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from PIL import Image
+from questions import *
 
 pallet = {
     "main":  "black",
@@ -66,6 +67,7 @@ class teamView(ctk.CTkFrame):
 class mainGame(ctk.CTkFrame):
     def __init__(self, parent):
         super().__init__(parent)
+        self.parent = parent
         self.configure(fg_color='transparent')
         self.columnconfigure((0, 1, 2, 3, 4), weight=1, uniform='a')
         self.rowconfigure((0, 1, 2, 3, 4), weight=1, uniform='a')
@@ -96,12 +98,19 @@ class mainGame(ctk.CTkFrame):
 class Question(ctk.CTkLabel):
     def __init__(self, parent, id):
         super().__init__(parent)
+        self.parent = parent
         self.team = -1
-        self.configure(fg_color=pallet['none'], text=str(id), corner_radius=10)
-        self.bind('<Button-1>', lambda event: parent.guess(id))
+        self.points = points[id]
+        self.configure(fg_color=pallet['none'], text=str(
+            self.points), corner_radius=10)
+        self.bind('<Button-1>',
+                  lambda event: (setattr(self, 'team', -1), parent.guess(id)))
 
     def reconfigure(self):
         if self.team in [0, 1, 2]:
+            if self.team != 2:
+                score[self.team] += self.points
+                self.parent.parent.updateScoreView()
             self.configure(fg_color=pallet['team'][self.team],
                            text_color=pallet['team'][self.team])
 
@@ -160,11 +169,14 @@ class ImgTxtFrame(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
 
-        text = '[img/test.png](1000x300) aaaa'
-        answ = 'test'
-        self.load_text(text)
+        self.question = '[img/test.png](1000x300) aaaa'
+        self.answ = 'test'
 
-        self.bind('<Button-1>', lambda event: self.load_text(answ))
+        self.ifQuestion = True
+        self.load_another()
+
+        print(id, self.answ)
+        self.bind('<Button-1>', lambda event: self.load_another())
 
     def load_image(self, uri, width, height):
         try:
@@ -178,6 +190,13 @@ class ImgTxtFrame(ctk.CTkFrame):
         except Exception as e:
             print(f"Unable to load img: {e}")
             self.imgLabel = None
+
+    def load_another(self):
+        if self.ifQuestion:
+            self.load_text(self.question)
+        else:
+            self.load_text(self.answ)
+        self.ifQuestion = not self.ifQuestion
 
     def load_text(self, text):
         for widget in self.winfo_children():
@@ -211,9 +230,11 @@ class ImgTxtFrame(ctk.CTkFrame):
             self.load_image(link, width, height)
         self.txtLabel = ctk.CTkLabel(self, text=self.text)
         self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky='nswe')
+        self.txtLabel.bind('<Button-1>', lambda event: self.load_another())
 
         if self.imgLabel:
             self.imgLabel.grid(row=1, column=0, padx=10, pady=10)
+            self.imgLabel.bind('<Button-1>', lambda event: self.load_another())
 
 
 if __name__ == '__main__':
