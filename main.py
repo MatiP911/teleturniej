@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from PIL import Image
-from questions import *
+from questions import questions
 
 pallet = {
     "main":  "black",
@@ -100,7 +100,7 @@ class Question(ctk.CTkLabel):
         super().__init__(parent)
         self.parent = parent
         self.team = -1
-        self.points = points[id]
+        self.points = questions[id][0]
         self.configure(fg_color=pallet['none'], text=str(
             self.points), corner_radius=10)
         self.bind('<Button-1>',
@@ -169,8 +169,8 @@ class ImgTxtFrame(ctk.CTkFrame):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=0)
 
-        self.question = '[img/test.png](1000x300) aaaa'
-        self.answ = 'test'
+        self.question = questions[id][1]
+        self.answ = questions[id][2]
 
         self.ifQuestion = True
         self.load_another()
