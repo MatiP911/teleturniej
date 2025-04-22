@@ -6,7 +6,7 @@
 - [] Add retakes (and LMB on team -1, RMB +1 retake) (max 5 or 7)
 - [] Add max img size in questions
 - [] Add so pngs in team folders are renderded in respective teams
-- [] Add score for making lines
+- [x] Add score for making lines
 - [] Add description and licence
 
 ---

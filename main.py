@@ -15,6 +15,8 @@ pallet = {
 
 score = [0, 0]
 
+forLine = 100
+
 
 class App(ctk.CTk):
     def __init__(self):
@@ -114,8 +116,30 @@ class mainGame(ctk.CTkFrame):
     def checkMatrix(self, row, col):
         if self.matrix[row][col].team != -1:
             self.matrix[row][col].reconfigure()
+            self.checkLine(row, col)
         else:
             self.after(300, lambda: self.checkMatrix(row, col))
+
+    def checkLine(self, row, col):
+        team = self.matrix[row][col].team
+        if team == -1:
+            return
+
+        if all(self.matrix[i][col].team == team for i in range(5)):
+            score[team] += forLine
+            self.parent.updateScoreView()
+
+        if all(self.matrix[row][i].team == team for i in range(5)):
+            score[team] += forLine
+            self.parent.updateScoreView()
+
+        if all(self.matrix[i][i].team == team for i in range(5)):
+            score[team] += forLine
+            self.parent.updateScoreView()
+
+        if all(self.matrix[i][4 - i].team == team for i in range(5)):
+            score[team] += forLine
+            self.parent.updateScoreView()
 
 
 class Question(ctk.CTkButton):
