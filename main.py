@@ -9,11 +9,13 @@ pallet = {
     "teamTxt": ("#F1F2EB", "#EAE2B7", "#1D1816"),
     "teamHover": ("#043F76", "#AC2020", "#998D33"),
     "none": "#464344",
-    "noneHover": "#343233"
+    "noneHover": "#343233",
+    'retake': 'red'
 }
 
 
 score = [0, 0]
+retakeCount = [0, 3]
 
 forLine = 100
 
@@ -71,7 +73,8 @@ class teamView(ctk.CTkFrame):
 
         self.columnconfigure(0, weight=1, uniform='a')
         self.rowconfigure(0, weight=1, uniform='a')
-        self.rowconfigure(1, weight=8, uniform='a')
+        self.rowconfigure(1, weight=1, uniform='a')
+        self.rowconfigure(2, weight=8, uniform='a')
 
         scoreViewer = ctk.CTkLabel(self, text_color=pallet['team'][teamNumber],
                                    textvariable=parent.scoreVar[teamNumber],
@@ -80,6 +83,11 @@ class teamView(ctk.CTkFrame):
         scoreViewer.grid(row=0, column=0, sticky='nswe')
         scoreViewer.bind('<Button-1>', self.changeScore)
 
+        retakeView = retakes(self, teamNumber)
+        retakeView.grid(row=1, column=0, sticky='nswe')
+        retakeView.bind('<Button-1>', retakeView.onRetakeLeftClick)
+        retakeView.bind('<Button-3>', retakeView.onRetakeRightClick)
+
     def changeScore(self, _):
         dialog = ctk.CTkInputDialog(text="Change score:", title="Change score")
         newScore = dialog.get_input()
@@ -87,6 +95,44 @@ class teamView(ctk.CTkFrame):
             return
         score[self.teamNumber] = int(newScore)
         self.parent.updateScoreView()
+
+
+class retakes(ctk.CTkFrame):
+    def __init__(self, parent, teamNumber):
+        super().__init__(parent)
+        self.teamNumber = teamNumber
+
+        self.configure(fg_color=pallet['bg'])
+        self.rowconfigure(0, weight=1, uniform='a')
+        self.columnconfigure((0, 1, 2, 3, 4, 5, 6), weight=1, uniform='a')
+
+        self.table = [0] * 5
+        for i in range(5):
+            self.table[i] = ctk.CTkLabel(
+                self, text='[x]', text_color=pallet['retake'],
+                font=('Adobe Arabic', 30))
+            self.table[i].grid(row=0, column=i+1, sticky='nswe')
+            self.table[i].bind('<Button-1>', self.onRetakeLeftClick)
+            self.table[i].bind('<Button-3>', self.onRetakeRightClick)
+
+        self.updateRetakes()
+
+    def updateRetakes(self):
+        for i in range(5):
+            if i <= retakeCount[self.teamNumber]:
+                self.table[i].configure(text='[X]')
+            else:
+                self.table[i].configure(text='')
+
+    def onRetakeLeftClick(self, event):
+        if retakeCount[self.teamNumber] >= 0:
+            retakeCount[self.teamNumber] -= 1
+            self.updateRetakes()
+
+    def onRetakeRightClick(self, event):
+        if retakeCount[self.teamNumber] < 5:
+            retakeCount[self.teamNumber] += 1
+            self.updateRetakes()
 
 
 class mainGame(ctk.CTkFrame):
