@@ -1,3 +1,4 @@
+import os
 import customtkinter as ctk
 from PIL import Image
 from questions import questions
@@ -88,6 +89,9 @@ class teamView(ctk.CTkFrame):
         retakeView.bind('<Button-1>', retakeView.onRetakeLeftClick)
         retakeView.bind('<Button-3>', retakeView.onRetakeRightClick)
 
+        teamMembersView = viewteamMembers(self, teamNumber)
+        teamMembersView.grid(row=2, column=0, sticky='nswe')
+
     def changeScore(self, _):
         dialog = ctk.CTkInputDialog(text="Change score:", title="Change score")
         newScore = dialog.get_input()
@@ -95,6 +99,38 @@ class teamView(ctk.CTkFrame):
             return
         score[self.teamNumber] = int(newScore)
         self.parent.updateScoreView()
+
+
+class viewteamMembers(ctk.CTkFrame):
+    def __init__(self, parent, teamNumber):
+        super().__init__(parent)
+
+        self.configure(fg_color=pallet['bg'])
+
+        self.load_images(teamNumber)
+
+        self.columnconfigure(0, weight=1, uniform='a')
+        for i in range(len(self.imgs)):
+            self.rowconfigure(i, weight=1, uniform='a')
+
+        for i, img in enumerate(self.imgs):
+            label = ctk.CTkLabel(self, image=img, text="",
+                                 fg_color=pallet['bg'])
+            label.grid(row=i, column=0, pady=5)
+
+    def load_images(self, teamNumber):
+        temp = ('img/teams/teamA', 'img/teams/teamB')
+        folder = temp[teamNumber]
+        self.imgs = []
+        for filename in os.listdir(folder):
+            if filename.endswith(('.png', '.jpg', '.jpeg')):
+                uri = os.path.join(folder, filename)
+                img = Image.open(uri)
+                img = img.resize((600, 600))
+                ctkImg = ctk.CTkImage(
+                    light_image=img, dark_image=img, size=(300, 300))
+                self.imgs.append(ctkImg)
+        return self.imgs
 
 
 class retakes(ctk.CTkFrame):
