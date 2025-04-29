@@ -16,7 +16,7 @@ pallet = {
 
 
 score = [0, 0]
-retakeCount = [0, 3]
+retakeCount = [5, 5]
 
 forLine = 100
 
@@ -384,7 +384,7 @@ class ImgTxtFrame(ctk.CTkFrame):
 
             self.load_image(link, width, height)
         self.txtLabel = ctk.CTkLabel(
-            self, text=self.text, text_color=pallet['txt'])
+            self, text=self.text, text_color=pallet['txt'], font=('Tekton Pro', 30), wraplength=600)
         self.txtLabel.grid(row=0, column=0, padx=10, pady=10, sticky='nswe')
         self.txtLabel.bind('<Button-1>', lambda event: self.load_another())
 
