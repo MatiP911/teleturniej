@@ -5,7 +5,7 @@ questions = {
     3: (40, '[img/rocketLeague.png](850x400) Wymień wszystkie powerupy w rumble Rocket League?', 'But, kolce, zamrożenie, turbo, grappling hook, rękawica, pięść, magnet, ssawka, zamiana, tornado'),
     4: (100, '[img/Little_Sister.png](730x860) W Bioshock, co robią Little Sisters?', 'Chodzą po mapie i zbierają ADAM (serum takie) do strzykawki z trupów. Następnie konsumują ów ADAM i przez to przekształcają go na użyteczną formę.'),
     5: (50, '[img/alienIsolation.jpg](850x450) Jak nazywa się główna bohaterka Alien Isolation', 'Amanda Ripley'),
-    6: (40, 'W kim zakochał sie Jackie Wells? (Cyberpunk)', 'Misty Olszewski'),
+    6: (30, 'W kim zakochał sie Jackie Wells? (Cyberpunk)', 'Misty Olszewski'),
     7: (40, '', ''),
     8: (10, 'Na podstawie czego (inspiracja do sprite) zostały stworzone postacie w grze Satisfactory', 'Pszczół'),
     9: (50, 'Wymień prawidłowo numery przynajmniej 2 z 4 podanych SCP: Mrugacz, Nieśmiałek, Łazarz, Doktor Plaga', 'SCP-173: Mrugacz\nSCP-096: Nieśmiałek\nSCP-106: Łazarz\nSCP-049; Doktor Plaga'),
@@ -23,7 +23,7 @@ questions = {
     21: (40, 'Gdzie dzieje się akcja Fallout 1?', 'Southern California'),
     22: (20, 'Jak się nazywa i czym jest pupil Doom Guya/ Doom Slayera', 'Królik Daisy'),
     23: (30, 'Kto otworzył portal do piekła w Doom?', 'The UAC (Union Aerospace Corporation)'),
-    24: (30, 'Jak się nazywa główny antagonista Borderlands 2?', 'Handsome Jack'),
+    24: (25, 'Jak się nazywa główny antagonista Borderlands 2?', 'Handsome Jack'),
 }
 
 
