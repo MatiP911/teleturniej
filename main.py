@@ -187,6 +187,9 @@ class mainGame(ctk.CTkFrame):
                 self.matrix[i][j].grid(
                     row=i, column=j, sticky='nswe', padx=5, pady=5)
 
+        self.matrix[2][2].configure(fg_color="#999999", text="Blank")
+        self.matrix[2][2].team = 3
+
     def guess(self, id):
         tempQuestionFrame = QuestionFrame(self, id)
         tempQuestionFrame.grid(row=0, column=0, rowspan=5,
@@ -207,19 +210,27 @@ class mainGame(ctk.CTkFrame):
         if team == -1:
             return
 
-        if all(self.matrix[i][col].team == team for i in range(5)):
+        # Pomocnicza funkcja do sprawdzania, czy komórka jest pasująca (dla TeamA, TeamB lub mydło)
+        def same_or_soap(cell_team):
+            return cell_team == team or cell_team == 3
+
+        # Sprawdzenie kolumny
+        if all(same_or_soap(self.matrix[i][col].team) for i in range(5)):
             score[team] += forLine
             self.parent.updateScoreView()
 
-        if all(self.matrix[row][i].team == team for i in range(5)):
+        # Sprawdzenie wiersza
+        if all(same_or_soap(self.matrix[row][i].team) for i in range(5)):
             score[team] += forLine
             self.parent.updateScoreView()
 
-        if all(self.matrix[i][i].team == team for i in range(5)):
+        # Sprawdzenie przekątnej (lewa górna do prawa dolna)
+        if all(same_or_soap(self.matrix[i][i].team) for i in range(5)):
             score[team] += forLine
             self.parent.updateScoreView()
 
-        if all(self.matrix[i][4 - i].team == team for i in range(5)):
+        # Sprawdzenie przekątnej (prawa górna do lewa dolna)
+        if all(same_or_soap(self.matrix[i][4 - i].team) for i in range(5)):
             score[team] += forLine
             self.parent.updateScoreView()
 
@@ -265,31 +276,42 @@ class QuestionFrame(ctk.CTkFrame):
         question = ImgTxtFrame(self, id)
         question.grid(row=1, column=0, columnspan=3, sticky='nswe')
 
-        butTeamA = ctk.CTkButton(self, text='TeamA', font=('Tekton Pro', 20),
-                                 command=lambda: self.buttonClicked(0),
-                                 fg_color=pallet['team'][0],
-                                 text_color=pallet['teamTxt'][0],
-                                 hover_color=pallet['teamHover'][0])
-        butTeamA.grid(row=2, column=0, sticky='nswe', padx=5, pady=10)
+        if id != 12:
+            butTeamA = ctk.CTkButton(self, text='TeamA', font=('Tekton Pro', 20),
+                                     command=lambda: self.buttonClicked(0),
+                                     fg_color=pallet['team'][0],
+                                     text_color=pallet['teamTxt'][0],
+                                     hover_color=pallet['teamHover'][0])
+            butTeamA.grid(row=2, column=0, sticky='nswe', padx=5, pady=10)
 
-        butTeamN = ctk.CTkButton(self, text='Nikt', font=('Tekton Pro', 20),
-                                 command=lambda: self.buttonClicked(2),
-                                 fg_color=pallet['team'][2],
-                                 text_color=pallet['teamTxt'][2],
-                                 hover_color=pallet['teamHover'][2])
-        butTeamN.grid(row=2, column=1, sticky='nswe', padx=5, pady=10)
+            butTeamN = ctk.CTkButton(self, text='Nikt', font=('Tekton Pro', 20),
+                                     command=lambda: self.buttonClicked(2),
+                                     fg_color=pallet['team'][2],
+                                     text_color=pallet['teamTxt'][2],
+                                     hover_color=pallet['teamHover'][2])
+            butTeamN.grid(row=2, column=1, sticky='nswe', padx=5, pady=10)
 
-        butTeamB = ctk.CTkButton(self, text='TeamB', font=('Tekton Pro', 20),
-                                 command=lambda: self.buttonClicked(1),
-                                 fg_color=pallet['team'][1],
-                                 text_color=pallet['teamTxt'][1],
-                                 hover_color=pallet['teamHover'][1])
-        butTeamB.grid(row=2, column=2, sticky='nswe', padx=5, pady=10)
+            butTeamB = ctk.CTkButton(self, text='TeamB', font=('Tekton Pro', 20),
+                                     command=lambda: self.buttonClicked(1),
+                                     fg_color=pallet['team'][1],
+                                     text_color=pallet['teamTxt'][1],
+                                     hover_color=pallet['teamHover'][1])
+            butTeamB.grid(row=2, column=2, sticky='nswe', padx=5, pady=10)
+
+        else:
+            self.after(1000, self.buttonClickedForSoap)  # np. auto zamkniecie po 3s
+
 
     def buttonClicked(self, teamID):
         row = self.id // 5
         col = self.id % 5
         self.parent.matrix[row][col].team = teamID
+        self.destroy()
+
+    def buttonClickedForSoap(self):
+        row = self.id // 5
+        col = self.id % 5
+        self.parent.matrix[row][col].team = 3  # Neutralne mydło
         self.destroy()
 
 
